@@ -14,3 +14,8 @@ class NormalizationPipeline(object):
         item['source_image_urls'] = source_image_urls
 
         return item
+
+
+class DjangoModelStorePipeline(object):
+    def process_item(self, item, spider):
+        return item
