@@ -1,4 +1,3 @@
-from scrapy import log
 from scrapy.contrib.linkextractors.sgml import SgmlLinkExtractor
 from scrapy.contrib.spiders import CrawlSpider, Rule
 from scrapy.selector import HtmlXPathSelector
@@ -13,8 +12,8 @@ class FancySpider(CrawlSpider):
         'http://www.thefancy.com/vinta',
     ]
 
-    # http://doc.scrapy.org/en/0.16/topics/spiders.html#crawling-rules
-    # http://doc.scrapy.org/en/0.16/topics/link-extractors.html#sgmllinkextractor
+    # http://doc.scrapy.org/en/latest/topics/spiders.html#crawling-rules
+    # http://doc.scrapy.org/en/latest/topics/link-extractors.html#sgmllinkextractor
     rules = (
         # find next page
         Rule(
@@ -51,9 +50,9 @@ class FancySpider(CrawlSpider):
 
         figure_image_urls = hxs.select('//ul[contains(@class, "figure-list")]/li/a/@href').extract()
         if figure_image_urls:
-            item['source_image_urls'] = figure_image_urls
+            item['image_urls'] = figure_image_urls
         else:
-            item['source_image_urls'] = hxs.select('//div[contains(@id, "content")]/div[contains(@class, "figure-row")]/div//figure/span/span/img/@src').extract()
+            item['image_urls'] = hxs.select('//div[contains(@id, "content")]/div[contains(@class, "figure-row")]/div//figure/span/span/img/@src').extract()
 
         item['source_url'] = response.url
 

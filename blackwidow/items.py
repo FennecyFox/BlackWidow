@@ -9,6 +9,6 @@ from scrapy.item import Item, Field
 
 class HeelsItem(Item):
     title = Field()
-    source_image_urls = Field()
     source_url = Field()
-    crawled = Field()
+    image_urls = Field()
+    images = Field()
