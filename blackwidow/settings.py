@@ -6,10 +6,12 @@
 #     http://doc.scrapy.org/topics/settings.html
 #
 
+import os
+
+
 BOT_NAME = 'BlackWidow'
-BOT_VERSION = '1.0'
 WEBSITE = 'http://heelsfetishism.com'
-USER_AGENT = '%s/%s (+%s)' % (BOT_NAME, BOT_VERSION, WEBSITE)
+USER_AGENT = '%s/1.0 (+%s)' % (BOT_NAME, WEBSITE)
 DEFAULT_REQUEST_HEADERS = {
     'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
     'Accept-Language': 'en',
@@ -20,17 +22,43 @@ NEWSPIDER_MODULE = 'blackwidow.spiders'
 
 DEFAULT_ITEM_CLASS = 'blackwidow.items.HeelsItem'
 
-ITEM_PIPELINES = [
-    'blackwidow.pipelines.DuplicatePipeline',
-    'blackwidow.pipelines.NormalizationPipeline',
-    'scrapy.contrib.pipeline.images.ImagesPipeline',
-]
-
-# http://doc.scrapy.org/en/latest/topics/images.html
-IMAGES_STORE = '/Users/vinta/Projects/blackwidow/images'
-IMAGES_MIN_WIDTH = 400
-
 # http://doc.scrapy.org/en/latest/topics/feed-exports.html
 # store result in file
 FEED_FORMAT = 'json'
 FEED_URI = 'result.json'
+
+ITEM_PIPELINES = [
+    'blackwidow.pipelines.DuplicatePipeline',
+    'blackwidow.pipelines.NormalizationPipeline',
+    'blackwidow.pipelines.DjangoModelPipeline',
+    # 'scrapy.contrib.pipeline.images.ImagesPipeline',
+]
+
+# http://doc.scrapy.org/en/latest/topics/images.html
+# save images to disk
+if 'scrapy.contrib.pipeline.images.ImagesPipeline' in ITEM_PIPELINES:
+    PROJECT_PATH = os.path.abspath(os.path.join(__file__, '..'))
+
+    IMAGES_STORE = os.path.join(PROJECT_PATH, 'images')
+    IMAGES_MIN_WIDTH = 400
+
+# http://jonathanstreet.com/blog/django-scrapy/
+if 'blackwidow.pipelines.DjangoModelPipeline' in ITEM_PIPELINES:
+    def setup_django_env(django_settings_dir):
+        import imp
+        import sys
+
+        from django.core.management import setup_environ
+
+        django_project_path = os.path.abspath(os.path.join(django_settings_dir, '..'))
+        sys.path.append(django_project_path)
+        sys.path.append(django_settings_dir)
+
+        f, filename, desc = imp.find_module('settings', [django_settings_dir, ])
+        project = imp.load_module('settings', f, filename, desc)
+
+        setup_environ(project)
+
+    # where Django settings.py placed
+    DJANGO_SETTINGS_DIR = '/all_projects/heelsfetishism/heelsfetishism'
+    setup_django_env(DJANGO_SETTINGS_DIR)

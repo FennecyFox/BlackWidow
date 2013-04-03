@@ -3,7 +3,6 @@
 # See documentation in:
 # http://doc.scrapy.org/topics/items.html
 
-from scrapy.contrib_exp.djangoitem import DjangoItem
 from scrapy.item import Item, Field
 
 
