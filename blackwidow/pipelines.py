@@ -12,6 +12,13 @@ from app_heels.models import Heels
 from app_heels import tasks as heels_tasks
 
 
+class DefaultValuePipeline(object):
+    def process_item(self, item, spider):
+        item.setdefault('title', '')
+
+        return item
+
+
 class DuplicatePipeline(object):
     def __init__(self):
         self.urls_seen = set()
@@ -27,9 +34,10 @@ class DuplicatePipeline(object):
 
 class NormalizationPipeline(object):
     def process_item(self, item, spider):
-        title = item['title'][0]
-        title = title.replace('Fancy - ', '')
-        item['title'] = title
+        if spider == 'fancy':
+            title = item['title'][0]
+            title = title.replace('Fancy - ', '')
+            item['title'] = title
 
         image_urls = list(set(item['image_urls']))
         item['image_urls'] = image_urls
@@ -44,7 +52,9 @@ class DjangoModelPipeline(object):
         with transaction.commit_on_success():
             heels, created = Heels.objects.get_or_create(user=user, source_url=item['source_url'])
             if created:
-                heels.comment = item['title']
+                if item['title']:
+                    heels.comment = item['title']
+
                 heels.source_image_urls = item['image_urls']
 
                 if len(item['image_urls']) == 1:

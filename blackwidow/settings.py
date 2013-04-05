@@ -14,6 +14,7 @@ WEBSITE = 'http://heelsfetishism.com'
 USER_AGENT = '%s/1.0 (+%s)' % (BOT_NAME, WEBSITE)
 DEFAULT_REQUEST_HEADERS = {
     'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+    'Accept-Encoding': 'gzip, deflate',
     'Accept-Language': 'en',
 }
 
@@ -22,12 +23,17 @@ NEWSPIDER_MODULE = 'blackwidow.spiders'
 
 DEFAULT_ITEM_CLASS = 'blackwidow.items.HeelsItem'
 
+COOKIES_DEBUG = True
+
+LOG_STDOUT = True
+
 # http://doc.scrapy.org/en/latest/topics/feed-exports.html
 # store result in file
 FEED_FORMAT = 'json'
 FEED_URI = 'result.json'
 
 ITEM_PIPELINES = [
+    'blackwidow.pipelines.DefaultValuePipeline',
     'blackwidow.pipelines.DuplicatePipeline',
     'blackwidow.pipelines.NormalizationPipeline',
     'blackwidow.pipelines.DjangoModelPipeline',
