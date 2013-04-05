@@ -34,7 +34,7 @@ class DuplicatePipeline(object):
 
 class NormalizationPipeline(object):
     def process_item(self, item, spider):
-        if spider == 'fancy':
+        if spider.name == 'fancy':
             title = item['title'][0]
             title = title.replace('Fancy - ', '')
             item['title'] = title
@@ -52,7 +52,7 @@ class DjangoModelPipeline(object):
         with transaction.commit_on_success():
             heels, created = Heels.objects.get_or_create(user=user, source_url=item['source_url'])
             if created:
-                if item['title']:
+                if item.get('title', None):
                     heels.comment = item['title']
 
                 heels.source_image_urls = item['image_urls']
@@ -61,6 +61,10 @@ class DjangoModelPipeline(object):
                     heels.source_image_url = item['image_urls'][0]
 
                 heels.save()
+            else:
+                spider.close_by_pipeline = True
+
+                return item
 
         if created:
             if heels.source_image_url:

@@ -23,4 +23,5 @@ $ pip install scrapy
 
 ``` bash
 $ scrapy crawl fancy
+$ scrapy crawl pinterest
 ```

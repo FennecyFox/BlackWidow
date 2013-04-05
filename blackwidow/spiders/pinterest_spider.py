@@ -1,12 +1,20 @@
+import math
+import urlparse
+
 from scrapy.contrib.linkextractors.sgml import SgmlLinkExtractor
 from scrapy.contrib.spiders import CrawlSpider, Rule
+from scrapy.exceptions import CloseSpider
 from scrapy.http import Request, FormRequest
 from scrapy.selector import HtmlXPathSelector
+from scrapy.spider import BaseSpider
 
 from blackwidow.items import HeelsItem
 
 
-class PinterestSpider(CrawlSpider):
+PINS_PER_PAGE = 50.0
+
+
+class PinterestSpider(BaseSpider):
     """
     For old UI
     """
@@ -14,34 +22,31 @@ class PinterestSpider(CrawlSpider):
     name = 'pinterest'
     allowed_domains = ['pinterest.com', ]
     start_urls = [
-        # old UI
-        'http://pinterest.com/vintalines/pins/?filter=likes',
+        'http://pinterest.com/vintalines/pins/?filter=likes&page=1',
     ]
 
-    # http://doc.scrapy.org/en/latest/topics/spiders.html#crawling-rules
-    # http://doc.scrapy.org/en/latest/topics/link-extractors.html#sgmllinkextractor
-    rules = (
-        # find next page
-        Rule(
-            SgmlLinkExtractor(
-                allow=(r"vintalines/pins/?filter=likes&page=\d+", ),
-                # restrict_xpaths=('//div[@id="content"]//div[contains(@class, "pagination")]', ),
-                unique=True,
-            ),
-            follow=True,
-        ),
-        # find detail page then parse it
-        Rule(
-            SgmlLinkExtractor(
-                allow=(r'pin/\d+', ),  # http://pinterest.com/pin/7810999325432246/
-                restrict_xpaths=('//*[@id="ColumnContainer"]', ),
-                unique=True,
-            ),
-            callback='parse_pin_detail',
-        ),
-    )
+    def parse(self, response):
+        hxs = HtmlXPathSelector(response)
+
+        total_liked_pins = int(hxs.select('//*[@id="ContextBar"]/div/ul[1]/li[3]/a/strong/text()').extract()[0])
+        pages = int(math.ceil(total_liked_pins / PINS_PER_PAGE))
+        for page in xrange(1, pages + 1):
+            next_url = 'http://pinterest.com/vintalines/pins/?filter=likes&page=%d' % (page)
+            yield Request(next_url, callback=self.parse_pin_list)
+
+    def parse_pin_list(self, response):
+        hxs = HtmlXPathSelector(response)
+
+        pin_urls = hxs.select('//*[@id="ColumnContainer"]/div[contains(@class, "pin")]/div[contains(@class, "PinHolder")]/a/@href').extract()
+        for pin_url in pin_urls:
+            pin_url = urlparse.urljoin('http://pinterest.com/', pin_url)
+            yield Request(pin_url, callback=self.parse_pin_detail)
 
     def parse_pin_detail(self, response):
+        if getattr(self, 'close_by_pipeline', None):
+            # only can call in spider, can not call in pipeline
+            raise CloseSpider('Stop')
+
         item = HeelsItem()
 
         hxs = HtmlXPathSelector(response)

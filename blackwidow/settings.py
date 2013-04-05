@@ -23,7 +23,7 @@ NEWSPIDER_MODULE = 'blackwidow.spiders'
 
 DEFAULT_ITEM_CLASS = 'blackwidow.items.HeelsItem'
 
-COOKIES_DEBUG = True
+# COOKIES_DEBUG = True
 
 LOG_STDOUT = True
 
@@ -33,7 +33,7 @@ FEED_FORMAT = 'json'
 FEED_URI = 'result.json'
 
 ITEM_PIPELINES = [
-    'blackwidow.pipelines.DefaultValuePipeline',
+    # 'blackwidow.pipelines.DefaultValuePipeline',
     'blackwidow.pipelines.DuplicatePipeline',
     'blackwidow.pipelines.NormalizationPipeline',
     'blackwidow.pipelines.DjangoModelPipeline',
@@ -43,7 +43,7 @@ ITEM_PIPELINES = [
 # http://doc.scrapy.org/en/latest/topics/images.html
 # save images to disk
 if 'scrapy.contrib.pipeline.images.ImagesPipeline' in ITEM_PIPELINES:
-    PROJECT_PATH = os.path.abspath(os.path.join(__file__, '..'))
+    PROJECT_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 
     IMAGES_STORE = os.path.join(PROJECT_PATH, 'images')
     IMAGES_MIN_WIDTH = 400
