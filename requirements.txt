@@ -1,0 +1,5 @@
+pillow==2.0.0
+# git+https://github.com/python-imaging/Pillow.git
+
+scrapy==0.16.4
+# git+https://github.com/scrapy/scrapy.git
