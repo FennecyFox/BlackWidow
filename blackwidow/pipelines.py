@@ -6,7 +6,6 @@
 from scrapy.exceptions import DropItem
 
 from django.contrib.auth.models import User
-from django.db import transaction
 
 from app_heels.models import Heels
 from app_heels import tasks as heels_tasks
@@ -49,22 +48,21 @@ class DjangoModelPipeline(object):
     def process_item(self, item, spider):
         user = User.objects.get(username='vinta')
 
-        with transaction.commit_on_success():
-            heels, created = Heels.objects.get_or_create(user=user, source_url=item['source_url'])
-            if created:
-                if item.get('title', None):
-                    heels.comment = item['title']
+        heels, created = Heels.objects.get_or_create(user=user, source_url=item['source_url'])
+        if created:
+            if item.get('title', None):
+                heels.comment = item['title']
 
-                heels.source_image_urls = item['image_urls']
+            heels.source_image_urls = item['image_urls']
 
-                if len(item['image_urls']) == 1:
-                    heels.source_image_url = item['image_urls'][0]
+            if len(item['image_urls']) == 1:
+                heels.source_image_url = item['image_urls'][0]
 
-                heels.save()
-            else:
-                spider.close_by_pipeline = True
+            heels.save()
+        else:
+            spider.close_by_pipeline = True
 
-                return item
+            return item
 
         if created:
             if heels.source_image_url:
