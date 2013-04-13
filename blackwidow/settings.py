@@ -68,3 +68,8 @@ if 'blackwidow.pipelines.DjangoModelPipeline' in ITEM_PIPELINES:
     # where Django settings.py placed
     DJANGO_SETTINGS_DIR = '/all_projects/heelsfetishism/heelsfetishism'
     setup_django_env(DJANGO_SETTINGS_DIR)
+
+try:
+    from settings_prod import *
+except ImportError:
+    pass

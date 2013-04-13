@@ -33,5 +33,6 @@ nosetests.xml
 .mr.developer.cfg
 .project
 .pydevproject
+settings_prod.py
 *.json
 images/

@@ -60,7 +60,7 @@ class DjangoModelPipeline(object):
 
             heels.save()
         else:
-            spider.close_by_pipeline = True
+            # spider.close_by_pipeline = True
 
             return item
 

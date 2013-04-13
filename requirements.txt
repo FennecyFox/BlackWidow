@@ -3,3 +3,5 @@ django==1.5.1
 pillow==2.0.0
 
 scrapy==0.16.4
+
+scrapy-sentry==0.4

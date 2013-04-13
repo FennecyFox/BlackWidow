@@ -60,10 +60,6 @@ class PinterestSpider(BaseSpider):
         return item
 
 
-PINTEREST_USERNAME = 'the_knight_who_say_ni'
-PINTEREST_PASSWORD = 'it'
-
-
 class PinterestNewSpider(CrawlSpider):
     """
     For new UI, you need to login
@@ -108,6 +104,9 @@ class PinterestNewSpider(CrawlSpider):
 
     def login(self, response):
         hxs = HtmlXPathSelector(response)
+
+        PINTEREST_USERNAME = self.settings['PINTEREST_USERNAME']
+        PINTEREST_PASSWORD = self.settings['PINTEREST_PASSWORD']
 
         login_info = {
             'email': PINTEREST_USERNAME,
