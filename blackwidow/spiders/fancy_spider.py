@@ -48,11 +48,9 @@ class FancySpider(CrawlSpider):
 
         item['title'] = hxs.select('//title/text()').extract()
 
-        figure_image_urls = hxs.select('//ul[contains(@class, "figure-list")]/li/a/@href').extract()
-        if figure_image_urls:
-            item['image_urls'] = figure_image_urls
-        else:
-            item['image_urls'] = hxs.select('//div[contains(@id, "content")]/div[contains(@class, "figure-row")]/div//figure/span/span/img/@src').extract()
+        center_image_urls = hxs.select('//div[contains(@id, "content")]/div[contains(@class, "figure-row")]/div//figure/span/span/img/@src').extract()
+        sidebar_image_urls = hxs.select('//ul[contains(@class, "figure-list")]/li/a/@href').extract()
+        item['image_urls'] = center_image_urls + sidebar_image_urls
 
         item['source_url'] = response.url
 
