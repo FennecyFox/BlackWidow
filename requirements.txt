@@ -4,4 +4,4 @@ pillow==2.0.0
 
 scrapy==0.16.5
 
-scrapy-sentry==0.5
+scrapy-sentry==0.4

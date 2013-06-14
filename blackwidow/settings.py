@@ -46,7 +46,7 @@ if 'scrapy.contrib.pipeline.images.ImagesPipeline' in ITEM_PIPELINES:
     PROJECT_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 
     IMAGES_STORE = os.path.join(PROJECT_PATH, 'images')
-    IMAGES_MIN_WIDTH = 400
+    IMAGES_MIN_WIDTH = 450
 
 
 # http://jonathanstreet.com/blog/django-scrapy/
