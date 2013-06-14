@@ -7,7 +7,7 @@ from scrapy.item import Item, Field
 
 
 class HeelsItem(Item):
-    title = Field()
+    comment = Field()
     source_url = Field()
     image_urls = Field()
     images = Field()

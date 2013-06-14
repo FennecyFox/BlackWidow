@@ -3,6 +3,8 @@
 # Don't forget to add your pipeline to the ITEM_PIPELINES setting
 # See: http://doc.scrapy.org/topics/item-pipeline.html
 
+from urlparse import urljoin
+
 from scrapy.exceptions import DropItem
 
 from django.contrib.auth.models import User
@@ -13,7 +15,9 @@ from app_heels import tasks as heels_tasks
 
 class DefaultValuePipeline(object):
     def process_item(self, item, spider):
-        item.setdefault('title', '')
+        item.setdefault('comment', '')
+        item.setdefault('source_url', '')
+        item.setdefault('image_urls', [])
 
         return item
 
@@ -33,13 +37,23 @@ class DuplicatePipeline(object):
 
 class NormalizationPipeline(object):
     def process_item(self, item, spider):
-        if spider.name == 'fancy':
-            title = item['title'][0]
-            title = title.replace('Fancy - ', '')
-            item['title'] = title
-
         image_urls = list(set(item['image_urls']))
         item['image_urls'] = image_urls
+
+        if spider.name == 'fancy':
+            comment = item['comment'][0]
+            comment = comment.replace('Fancy - ', '')
+            item['comment'] = comment
+
+        if spider.name == 'beautylegmm':
+            comment = item['comment'][0]
+            item['comment'] = comment
+
+            new_image_urls = []
+            for image_url in image_urls:
+                full_url = urljoin('http://www.beautylegmm.com/', image_url)
+                new_image_urls.append(full_url)
+            item['image_urls'] = new_image_urls
 
         return item
 
@@ -50,8 +64,8 @@ class DjangoModelPipeline(object):
 
         heels, created = Heels.objects.get_or_create(user=user, source_url=item['source_url'])
         if created:
-            if item.get('title', None):
-                heels.comment = item['title']
+            if item.get('comment', None):
+                heels.comment = item['comment']
 
             heels.source_image_urls = item['image_urls']
 
@@ -60,8 +74,6 @@ class DjangoModelPipeline(object):
 
             heels.save()
         else:
-            # spider.close_by_pipeline = True
-
             return item
 
         if created:
