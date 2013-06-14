@@ -7,9 +7,9 @@ from blackwidow.items import HeelsItem
 
 class FancySpider(CrawlSpider):
     name = 'fancy'
-    allowed_domains = ['www.thefancy.com', ]
+    allowed_domains = ['www.fancy.com', ]
     start_urls = [
-        'http://www.thefancy.com/vinta',
+        'http://www.fancy.com/vinta',
     ]
 
     # http://doc.scrapy.org/en/latest/topics/spiders.html#crawling-rules
@@ -18,7 +18,7 @@ class FancySpider(CrawlSpider):
         # find next page
         Rule(
             SgmlLinkExtractor(
-                allow=(r'vinta/fancyd/\d+', ),  # http://www.thefancy.com/vinta/fancyd/1360222057
+                allow=(r'vinta/fancyd/\d+', ),  # http://www.fancy.com/vinta/fancyd/1360222057
                 restrict_xpaths=('//div[@id="content"]//div[contains(@class, "pagination")]', ),
                 unique=True,
             ),
@@ -27,7 +27,7 @@ class FancySpider(CrawlSpider):
         # find detail page then parse it
         Rule(
             SgmlLinkExtractor(
-                allow=(r'things/\d+', ),  # http://www.thefancy.com/things/317225220580577663
+                allow=(r'things/\d+', ),  # http://www.fancy.com/things/317225220580577663
                 restrict_xpaths=('//div[@id="content"]/div[contains(@class, "stream")]', ),
                 unique=True,
             ),
