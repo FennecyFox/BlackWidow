@@ -27,10 +27,10 @@ DEFAULT_ITEM_CLASS = 'blackwidow.items.HeelsItem'
 
 LOG_STDOUT = True
 
-# http://doc.scrapy.org/en/latest/topics/feed-exports.html
-# store result in file
-FEED_FORMAT = 'json'
-FEED_URI = 'result.json'
+# # http://doc.scrapy.org/en/latest/topics/feed-exports.html
+# # store result in file
+# FEED_FORMAT = 'json'
+# FEED_URI = 'result.json'
 
 ITEM_PIPELINES = [
     'blackwidow.pipelines.DefaultValuePipeline',
