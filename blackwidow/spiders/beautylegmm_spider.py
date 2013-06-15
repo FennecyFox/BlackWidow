@@ -15,15 +15,15 @@ class FancySpider(CrawlSpider):
     # http://doc.scrapy.org/en/latest/topics/spiders.html#crawling-rules
     # http://doc.scrapy.org/en/latest/topics/link-extractors.html#sgmllinkextractor
     rules = (
-        # # find next page
-        # Rule(
-        #     SgmlLinkExtractor(
-        #         allow=(r'index\-\d+\.html', ),  # http://www.beautylegmm.com/index-2.html
-        #         restrict_xpaths=('//*[@id="pages"]', ),
-        #         unique=True,
-        #     ),
-        #     follow=True,
-        # ),
+        # find next page
+        Rule(
+            SgmlLinkExtractor(
+                allow=(r'index\-\d+\.html', ),  # http://www.beautylegmm.com/index-2.html
+                restrict_xpaths=('//*[@id="pages"]', ),
+                unique=True,
+            ),
+            follow=True,
+        ),
 
         # find detail page then parse it
         Rule(

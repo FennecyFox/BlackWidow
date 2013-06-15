@@ -41,12 +41,18 @@ class NormalizationPipeline(object):
         item['image_urls'] = image_urls
 
         if spider.name == 'fancy':
-            comment = item['comment'][0]
-            comment = comment.replace('Fancy - ', '')
+            try:
+                comment = item['comment'][0]
+                comment = comment.replace('Fancy - ', '')
+            except IndexError:
+                comment = ''
             item['comment'] = comment
 
-        if spider.name == 'beautylegmm':
-            comment = item['comment'][0]
+        elif spider.name == 'beautylegmm':
+            try:
+                comment = item['comment'][0]
+            except IndexError:
+                comment = ''
             item['comment'] = comment
 
             new_image_urls = []
