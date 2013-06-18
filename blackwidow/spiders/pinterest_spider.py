@@ -52,7 +52,10 @@ class PinterestSpider(BaseSpider):
         hxs = HtmlXPathSelector(response)
 
         item['image_urls'] = hxs.select('//*[@id="PinImageHolder"]/a/@href').extract()
-        if not filter(item['image_urls'][0].endswith, ('.jpg', '.jpeg', '.gif', '.png')):
+        if item['image_urls']:
+            if not filter(item['image_urls'][0].endswith, ('.jpg', '.jpeg', '.gif', '.png')):
+                item['image_urls'] = hxs.select('//*[@id="pinCloseupImage"]/@src').extract()
+        else:
             item['image_urls'] = hxs.select('//*[@id="pinCloseupImage"]/@src').extract()
 
         item['source_url'] = response.url
