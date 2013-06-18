@@ -11,6 +11,7 @@ from django.contrib.auth.models import User
 
 from app_heels.models import Heels
 from app_heels import tasks as heels_tasks
+from app_reaper.models import Blacklist
 
 
 class DefaultValuePipeline(object):
@@ -66,6 +67,10 @@ class NormalizationPipeline(object):
 
 class DjangoModelPipeline(object):
     def process_item(self, item, spider):
+        if spider.name == 'beautylegmm':
+            if Blacklist.objects.filter(url=item['source_url']).exists():
+                raise DropItem('URL in blacklist: %s' % item)
+
         user = User.objects.get(username='vinta')
 
         heels, created = Heels.objects.get_or_create(user=user, source_url=item['source_url'])
