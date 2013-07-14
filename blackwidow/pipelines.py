@@ -4,6 +4,7 @@
 # See: http://doc.scrapy.org/topics/item-pipeline.html
 
 from urlparse import urljoin
+import re
 
 from scrapy.exceptions import DropItem
 
@@ -41,13 +42,18 @@ class NormalizationPipeline(object):
         image_urls = list(set(item['image_urls']))
         item['image_urls'] = image_urls
 
-        if spider.name == 'fancy':
+        if spider.name == 'beautylegmm':
             try:
                 comment = item['comment'][0]
-                comment = comment.replace('Fancy - ', '')
             except IndexError:
                 comment = ''
             item['comment'] = comment
+
+            new_image_urls = []
+            for image_url in image_urls:
+                full_url = urljoin('http://www.beautylegmm.com/', image_url)
+                new_image_urls.append(full_url)
+            item['image_urls'] = new_image_urls
 
         elif spider.name == 'beautylegmm':
             try:
@@ -62,6 +68,15 @@ class NormalizationPipeline(object):
                 new_image_urls.append(full_url)
             item['image_urls'] = new_image_urls
 
+        elif spider.name == 'wendyslookbook':
+            try:
+                comment = item['comment'][0]
+                comment = comment.replace(" : Wendy's Lookbook", '')
+                comment = comment.replace('  :: ', ' :: ')
+            except IndexError:
+                comment = ''
+            item['comment'] = comment
+
         return item
 
 
@@ -70,6 +85,20 @@ class DjangoModelPipeline(object):
         if spider.name == 'beautylegmm':
             if Blacklist.objects.filter(url=item['source_url']).exists():
                 raise DropItem('URL in blacklist: %s' % item)
+
+        elif spider.name == 'wendyslookbook':
+            if Blacklist.objects.filter(url=item['source_url']).exists():
+                raise DropItem('URL in blacklist: %s' % item)
+
+            if len(item['image_urls']) == 0:
+                raise DropItem('No image found: %s' % item)
+            else:
+                big_image_urls = []
+                for small_image_url in item['image_urls']:
+                    big_image_url = re.sub(r'\-\d+x\d+\.', '.', small_image_url)
+                    big_image_urls.append(big_image_url)
+
+                item['image_urls'] = big_image_urls
 
         user = User.objects.get(username='vinta')
 

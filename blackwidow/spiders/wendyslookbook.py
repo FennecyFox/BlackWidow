@@ -5,11 +5,11 @@ from scrapy.selector import HtmlXPathSelector
 from blackwidow.items import HeelsItem
 
 
-class BeautylegMMSpider(CrawlSpider):
-    name = 'beautylegmm'
-    allowed_domains = ['www.beautylegmm.com', ]
+class WendysLookbookSpider(CrawlSpider):
+    name = 'wendyslookbook'
+    allowed_domains = ['www.wendyslookbook.com', ]
     start_urls = [
-        'http://www.beautylegmm.com/',
+        'http://www.wendyslookbook.com/',
     ]
 
     # http://doc.scrapy.org/en/latest/topics/spiders.html#crawling-rules
@@ -18,8 +18,8 @@ class BeautylegMMSpider(CrawlSpider):
         # find next page
         Rule(
             SgmlLinkExtractor(
-                allow=(r'index\-\d+\.html', ),  # http://www.beautylegmm.com/index-2.html
-                restrict_xpaths=('//*[@id="pages"]', ),
+                allow=(r'page\/\d+\/', ),  # http://www.wendyslookbook.com/page/2/
+                restrict_xpaths=('//*[@id="coreContent"]/div[6]', ),
                 unique=True,
             ),
             follow=True,
@@ -28,8 +28,8 @@ class BeautylegMMSpider(CrawlSpider):
         # find detail page then parse it
         Rule(
             SgmlLinkExtractor(
-                allow=(r'\w+/beautyleg\-\d+\.html', ),  # http://www.beautylegmm.com/Susan/beautyleg-816.html
-                restrict_xpaths=('//*[@id="content"]', ),
+                allow=(r'\d+\/\d+\/[\w-]+\/', ),  # http://www.wendyslookbook.com/2013/06/pick-me-up-striped-sequin-tulle-skirt/
+                restrict_xpaths=('//*[@id="coreContent"]', ),
                 unique=True,
             ),
             callback='parse_post_detail',
@@ -47,8 +47,8 @@ class BeautylegMMSpider(CrawlSpider):
 
         item = HeelsItem()
 
-        item['comment'] = hxs.select('//*[@id="contents"]/div[5]/p[1]/text()').extract()
-        item['image_urls'] = hxs.select('//*[@id="contents"]/div[5]//img/@src').extract()
+        item['comment'] = hxs.select('//title/text()').extract()
+        item['image_urls'] = hxs.select('//*[@id="coreContent"]/div[1]/div[1]/div//img/@src').extract()
         item['source_url'] = response.url
 
         return item
