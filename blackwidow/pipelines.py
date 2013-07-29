@@ -119,6 +119,6 @@ class DjangoModelPipeline(object):
         if created:
             if heels.source_image_url:
                 # Celery task
-                heels_tasks.save_heels_image_from_url.delay(heels.id, heels.source_image_url)
+                heels_tasks.save_heels_image.delay(heels.id, url=heels.source_image_url)
 
         return item
