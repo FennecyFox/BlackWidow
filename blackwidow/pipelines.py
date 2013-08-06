@@ -82,14 +82,10 @@ class NormalizationPipeline(object):
 
 class DjangoModelPipeline(object):
     def process_item(self, item, spider):
-        if spider.name == 'beautylegmm':
-            if Blacklist.objects.filter(url=item['source_url']).exists():
-                raise DropItem('URL in blacklist: %s' % item)
+        if Blacklist.objects.filter(url=item['source_url']).exists():
+            raise DropItem('URL in blacklist: %s' % item)
 
         elif spider.name == 'wendyslookbook':
-            if Blacklist.objects.filter(url=item['source_url']).exists():
-                raise DropItem('URL in blacklist: %s' % item)
-
             if len(item['image_urls']) == 0:
                 raise DropItem('No image found: %s' % item)
             else:
