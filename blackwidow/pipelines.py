@@ -55,18 +55,13 @@ class NormalizationPipeline(object):
                 new_image_urls.append(full_url)
             item['image_urls'] = new_image_urls
 
-        elif spider.name == 'beautylegmm':
+        elif spider.name == 'fancy':
             try:
                 comment = item['comment'][0]
+                comment = comment.replace('Fancy - ', '')
             except IndexError:
                 comment = ''
             item['comment'] = comment
-
-            new_image_urls = []
-            for image_url in image_urls:
-                full_url = urljoin('http://www.beautylegmm.com/', image_url)
-                new_image_urls.append(full_url)
-            item['image_urls'] = new_image_urls
 
         elif spider.name == 'wendyslookbook':
             try:
