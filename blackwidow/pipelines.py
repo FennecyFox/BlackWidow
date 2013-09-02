@@ -71,6 +71,13 @@ class NormalizationPipeline(object):
                 comment = ''
             item['comment'] = comment
 
+        elif spider.name == 'pinterest':
+            try:
+                comment = item['comment'][0]
+            except IndexError:
+                comment = ''
+            item['comment'] = comment
+
         elif spider.name == 'wendyslookbook':
             try:
                 comment = item['comment'][0]
