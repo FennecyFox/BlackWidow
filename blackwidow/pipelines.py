@@ -63,6 +63,14 @@ class NormalizationPipeline(object):
                 comment = ''
             item['comment'] = comment
 
+        elif spider.name == 'ohmyvogue':
+            try:
+                comment = item['comment'][0]
+                comment = comment.replace("... Oh My Vogue !: ", '')
+            except IndexError:
+                comment = ''
+            item['comment'] = comment
+
         elif spider.name == 'wendyslookbook':
             try:
                 comment = item['comment'][0]
@@ -80,6 +88,10 @@ class DjangoModelPipeline(object):
         if Blacklist.objects.filter(url=item['source_url']).exists():
             raise DropItem('URL in blacklist: %s' % item)
 
+        if spider.name == 'ohmyvogue':
+            if len(item['image_urls']) == 0:
+                raise DropItem('No image found: %s' % item)
+
         elif spider.name == 'wendyslookbook':
             if len(item['image_urls']) == 0:
                 raise DropItem('No image found: %s' % item)
@@ -95,8 +107,8 @@ class DjangoModelPipeline(object):
 
         heels, created = Heels.objects.get_or_create(user=user, source_url=item['source_url'])
         if created:
-            if item.get('comment', None):
-                heels.comment = item['comment']
+            if item.get('comment', ''):
+                heels.comment = item['comment'].strip()
 
             heels.source_image_urls = item['image_urls']
 
