@@ -9,28 +9,17 @@
 import os
 
 
-BOT_NAME = 'BlackWidow'
-WEBSITE = 'http://heelsfetishism.com'
-USER_AGENT = '%s/1.0 (+%s)' % (BOT_NAME, WEBSITE)
-DEFAULT_REQUEST_HEADERS = {
-    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-    'Accept-Encoding': 'gzip, deflate',
-    'Accept-Language': 'en',
-}
+# BOT_NAME = 'BlackWidow'
+# WEBSITE = 'heelsfetishism.com'
+# USER_AGENT = '%s/2.0 (%s)' % (BOT_NAME, WEBSITE)
 
-SPIDER_MODULES = ['blackwidow.spiders']
+SPIDER_MODULES = ['blackwidow.spiders', ]
 NEWSPIDER_MODULE = 'blackwidow.spiders'
 
 DEFAULT_ITEM_CLASS = 'blackwidow.items.HeelsItem'
 
-# COOKIES_DEBUG = True
-
+LOG_FILE = 'blackwidow.log'
 LOG_STDOUT = True
-
-# # http://doc.scrapy.org/en/latest/topics/feed-exports.html
-# # store result in file
-# FEED_FORMAT = 'json'
-# FEED_URI = 'result.json'
 
 ITEM_PIPELINES = [
     'blackwidow.pipelines.DefaultValuePipeline',
@@ -41,7 +30,6 @@ ITEM_PIPELINES = [
 ]
 
 # http://doc.scrapy.org/en/latest/topics/images.html
-# save images to disk
 if 'scrapy.contrib.pipeline.images.ImagesPipeline' in ITEM_PIPELINES:
     PROJECT_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 

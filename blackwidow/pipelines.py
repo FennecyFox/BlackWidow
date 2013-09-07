@@ -16,6 +16,7 @@ from app_reaper.models import Blacklist
 
 
 class DefaultValuePipeline(object):
+
     def process_item(self, item, spider):
         item.setdefault('comment', '')
         item.setdefault('source_url', '')
@@ -25,12 +26,13 @@ class DefaultValuePipeline(object):
 
 
 class DuplicatePipeline(object):
+
     def __init__(self):
         self.urls_seen = set()
 
     def process_item(self, item, spider):
         if item['source_url'] in self.urls_seen:
-            raise DropItem('Duplicate item found: %s' % item)
+            raise DropItem('Duplicate item found: %s' % item['source_url'])
         else:
             self.urls_seen.add(item['source_url'])
 
@@ -38,83 +40,74 @@ class DuplicatePipeline(object):
 
 
 class NormalizationPipeline(object):
+
     def process_item(self, item, spider):
-        image_urls = list(set(item['image_urls']))
-        item['image_urls'] = image_urls
+        if len(item['image_urls']) == 0:
+            raise DropItem('No image found: %s' % item['source_url'])
+
+        try:
+            comment = item['comment'][0]
+        except IndexError:
+            comment = ''
+        item['comment'] = comment
 
         if spider.name == 'beautylegmm':
-            try:
-                comment = item['comment'][0]
-            except IndexError:
-                comment = ''
-            item['comment'] = comment
-
             new_image_urls = []
-            for image_url in image_urls:
-                full_url = urljoin('http://www.beautylegmm.com/', image_url)
-                new_image_urls.append(full_url)
+            for image_url in item['image_urls']:
+                new_image_url = urljoin('http://www.beautylegmm.com/', image_url)
+                new_image_urls.append(new_image_url)
             item['image_urls'] = new_image_urls
 
         elif spider.name == 'fancy':
-            try:
-                comment = item['comment'][0]
-                comment = comment.replace('Fancy - ', '')
-            except IndexError:
-                comment = ''
-            item['comment'] = comment
+            item['comment'] = comment.replace('Fancy - ', '')
+
+        elif spider.name == 'garypeppergirl':
+            new_image_urls = []
+            for image_url in item['image_urls']:
+                new_image_url = re.sub(r'\-\d+x\d+\.', '.', image_url)
+                new_image_urls.append(new_image_url)
+
+            item['image_urls'] = new_image_urls
 
         elif spider.name == 'ohmyvogue':
-            try:
-                comment = item['comment'][0]
-                comment = comment.replace("... Oh My Vogue !: ", '')
-            except IndexError:
-                comment = ''
-            item['comment'] = comment
+            item['comment'] = comment.replace('... Oh My Vogue !: ', '')
 
         elif spider.name == 'pinterest':
-            try:
-                comment = item['comment'][0]
-            except IndexError:
-                comment = ''
-            item['comment'] = comment
+            new_image_urls = []
+            for image_url in item['image_urls']:
+                if filter(image_url.endswith, ('.jpg', '.jpeg', '.gif', '.png')):
+                    ori_image_url = image_url.replace('736x', 'originals')
+                    new_image_urls.append(ori_image_url)
+
+            item['image_urls'] = new_image_urls
 
         elif spider.name == 'wendyslookbook':
-            try:
-                comment = item['comment'][0]
-                comment = comment.replace(" : Wendy's Lookbook", '')
-                comment = comment.replace('  :: ', ' :: ')
-            except IndexError:
-                comment = ''
+            comment = comment.replace(" : Wendy's Lookbook", '').replace('  :: ', ' :: ')
             item['comment'] = comment
+
+            new_image_urls = []
+            for image_url in item['image_urls']:
+                new_image_url = re.sub(r'\-\d+x\d+\.', '.', image_url)
+                new_image_urls.append(new_image_url)
+
+            item['image_urls'] = new_image_urls
+
+        item['image_urls'] = list(set(item['image_urls']))
 
         return item
 
 
 class DjangoModelPipeline(object):
+
     def process_item(self, item, spider):
         if Blacklist.objects.filter(url=item['source_url']).exists():
-            raise DropItem('URL in blacklist: %s' % item)
-
-        if spider.name == 'ohmyvogue':
-            if len(item['image_urls']) == 0:
-                raise DropItem('No image found: %s' % item)
-
-        elif spider.name == 'wendyslookbook':
-            if len(item['image_urls']) == 0:
-                raise DropItem('No image found: %s' % item)
-            else:
-                big_image_urls = []
-                for small_image_url in item['image_urls']:
-                    big_image_url = re.sub(r'\-\d+x\d+\.', '.', small_image_url)
-                    big_image_urls.append(big_image_url)
-
-                item['image_urls'] = big_image_urls
+            raise DropItem('URL in blacklist: %s' % item['source_url'])
 
         user = User.objects.get(username='vinta')
 
         heels, created = Heels.objects.get_or_create(user=user, source_url=item['source_url'])
         if created:
-            if item.get('comment', ''):
+            if item['comment']:
                 heels.comment = item['comment'].strip()
 
             heels.source_image_urls = item['image_urls']

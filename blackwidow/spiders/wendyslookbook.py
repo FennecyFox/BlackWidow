@@ -6,19 +6,18 @@ from blackwidow.items import HeelsItem
 
 
 class WendysLookbookSpider(CrawlSpider):
+
     name = 'wendyslookbook'
     allowed_domains = ['www.wendyslookbook.com', ]
     start_urls = [
         'http://www.wendyslookbook.com/',
     ]
 
-    # http://doc.scrapy.org/en/latest/topics/spiders.html#crawling-rules
-    # http://doc.scrapy.org/en/latest/topics/link-extractors.html#sgmllinkextractor
     rules = (
         # find next page
         Rule(
             SgmlLinkExtractor(
-                allow=(r'page\/\d+\/', ),  # http://www.wendyslookbook.com/page/2/
+                allow=(r'page/\d+/', ),  # http://www.wendyslookbook.com/page/2/
                 restrict_xpaths=('//*[@id="coreContent"]/div[6]', ),
                 unique=True,
             ),
@@ -28,7 +27,7 @@ class WendysLookbookSpider(CrawlSpider):
         # find detail page then parse it
         Rule(
             SgmlLinkExtractor(
-                allow=(r'\d+\/\d+\/[\w-]+\/', ),  # http://www.wendyslookbook.com/2013/06/pick-me-up-striped-sequin-tulle-skirt/
+                allow=(r'\d+/\d+/[\w-]+/', ),  # http://www.wendyslookbook.com/2013/06/pick-me-up-striped-sequin-tulle-skirt/
                 restrict_xpaths=('//*[@id="coreContent"]', ),
                 unique=True,
             ),

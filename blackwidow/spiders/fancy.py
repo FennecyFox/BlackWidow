@@ -5,38 +5,36 @@ from scrapy.selector import HtmlXPathSelector
 from blackwidow.items import HeelsItem
 
 
-class BeautylegMMSpider(CrawlSpider):
-    name = 'beautylegmm'
-    allowed_domains = ['www.beautylegmm.com', ]
+class FancySpider(CrawlSpider):
+
+    name = 'fancy'
+    allowed_domains = ['fancy.com', ]
     start_urls = [
-        'http://www.beautylegmm.com/',
+        'http://fancy.com/vinta',
     ]
 
-    # http://doc.scrapy.org/en/latest/topics/spiders.html#crawling-rules
-    # http://doc.scrapy.org/en/latest/topics/link-extractors.html#sgmllinkextractor
     rules = (
         # find next page
         Rule(
             SgmlLinkExtractor(
-                allow=(r'index\-\d+\.html', ),  # http://www.beautylegmm.com/index-2.html
-                restrict_xpaths=('//*[@id="pages"]', ),
+                allow=(r'vinta/fancyd/\d+', ),  # http://fancy.com/vinta/fancyd/1365620197
+                restrict_xpaths=('//div[@id="content"]//div[contains(@class, "pagination")]', ),
                 unique=True,
             ),
             follow=True,
         ),
-
         # find detail page then parse it
         Rule(
             SgmlLinkExtractor(
-                allow=(r'\w+/beautyleg\-\d+\.html', ),  # http://www.beautylegmm.com/Susan/beautyleg-816.html
-                restrict_xpaths=('//*[@id="content"]', ),
+                allow=(r'things/\d+/\S+', ),  # http://fancy.com/things/392410187429841177/Lenny-Sandals-by-MIA
+                restrict_xpaths=('//div[@id="content"]//ol[contains(@class, "stream")]', ),
                 unique=True,
             ),
-            callback='parse_post_detail',
+            callback='parse_item_detail',
         ),
     )
 
-    def parse_post_detail(self, response):
+    def parse_item_detail(self, response):
         """
         Scrapy creates scrapy.http.Request objects for each URL in the
         start_urls attribute of the Spider, and assigns them the parse method
@@ -47,8 +45,8 @@ class BeautylegMMSpider(CrawlSpider):
 
         item = HeelsItem()
 
-        item['comment'] = hxs.select('//*[@id="contents"]/div[5]/p[1]/text()').extract()
-        item['image_urls'] = hxs.select('//*[@id="contents"]/div[5]//img/@src').extract()
+        item['comment'] = hxs.select('//*[@id="content"]//figure//figcaption/text()').extract()
+        item['image_urls'] = hxs.select('//*[@id="content"]//span[contains(@class, "wrapper-fig-image")]//img/@src').extract()
         item['source_url'] = response.url
 
         return item
