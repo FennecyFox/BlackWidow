@@ -5,20 +5,20 @@ from scrapy.selector import HtmlXPathSelector
 from blackwidow.items import HeelsItem
 
 
-class WendysLookbookSpider(CrawlSpider):
+class GaryPepperSpider(CrawlSpider):
 
-    name = 'wendyslookbook'
-    allowed_domains = ['www.wendyslookbook.com', ]
+    name = 'garypeppergirl'
+    allowed_domains = ['garypeppergirl.com', ]
     start_urls = [
-        'http://www.wendyslookbook.com/',
+        'http://garypeppergirl.com/',
     ]
 
     rules = (
         # find next page
         Rule(
             SgmlLinkExtractor(
-                allow=(r'page/\d+/', ),  # http://www.wendyslookbook.com/page/2/
-                restrict_xpaths=('//*[@id="coreContent"]/div[6]', ),
+                allow=(r'page/\d+', ),  # http://garypeppergirl.com/page/3
+                restrict_xpaths=('//*[@id="wrap"]//div[contains(@class, "pagination-gamma")]', ),
                 unique=True,
             ),
             follow=True,
@@ -27,8 +27,8 @@ class WendysLookbookSpider(CrawlSpider):
         # find detail page then parse it
         Rule(
             SgmlLinkExtractor(
-                allow=(r'\d+/\d+/[\w-]+/', ),  # http://www.wendyslookbook.com/2013/06/pick-me-up-striped-sequin-tulle-skirt/
-                restrict_xpaths=('//*[@id="coreContent"]', ),
+                allow=(r'\d+/\d+/[\w-]+', ),  # http://garypeppergirl.com/2013/03/sixty
+                restrict_xpaths=('//*[@id="posts"]//div[contains(@class, "post")]//div[contains(@class, "title")]', ),
                 unique=True,
             ),
             callback='parse_post_detail',
@@ -46,8 +46,8 @@ class WendysLookbookSpider(CrawlSpider):
 
         item = HeelsItem()
 
-        item['comment'] = hxs.select('//title/text()').extract()
-        item['image_urls'] = hxs.select('//*[@id="coreContent"]/div[1]/div[1]/div//img/@src').extract()
+        item['comment'] = hxs.select('//*[@id="post"]//div[contains(@class, "title")]//a/text()').extract()
+        item['image_urls'] = hxs.select('//*[@id="post"]//div[contains(@class, "media")]//img/@src').extract()
         item['source_url'] = response.url
 
         return item

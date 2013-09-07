@@ -6,14 +6,13 @@ from blackwidow.items import HeelsItem
 
 
 class FancySpider(CrawlSpider):
+
     name = 'fancy'
     allowed_domains = ['fancy.com', ]
     start_urls = [
         'http://fancy.com/vinta',
     ]
 
-    # http://doc.scrapy.org/en/latest/topics/spiders.html#crawling-rules
-    # http://doc.scrapy.org/en/latest/topics/link-extractors.html#sgmllinkextractor
     rules = (
         # find next page
         Rule(
@@ -46,12 +45,8 @@ class FancySpider(CrawlSpider):
 
         item = HeelsItem()
 
-        item['comment'] = hxs.select('//title/text()').extract()
-
-        center_image_urls = hxs.select('//*[@id="content"]//div[contains(@class, "first")]//span[contains(@class, "fig-image")]/img/@src').extract()
-        sidebar_image_urls = hxs.select('//*[@id="sidebar"]//ul[contains(@class, "figure-list")]/li/a/@data-bigger').extract()
-        item['image_urls'] = center_image_urls + sidebar_image_urls
-
+        item['comment'] = hxs.select('//*[@id="content"]//figure//figcaption/text()').extract()
+        item['image_urls'] = hxs.select('//*[@id="content"]//span[contains(@class, "wrapper-fig-image")]//img/@src').extract()
         item['source_url'] = response.url
 
         return item
