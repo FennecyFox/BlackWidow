@@ -1,6 +1,3 @@
-import math
-import urlparse
-
 from scrapy.contrib.linkextractors.sgml import SgmlLinkExtractor
 from scrapy.contrib.spiders import CrawlSpider, Rule
 from scrapy.exceptions import CloseSpider
@@ -31,12 +28,6 @@ class PinterestSpider(CrawlSpider):
     )
 
     def parse_pin_detail(self, response):
-        """
-        Scrapy creates scrapy.http.Request objects for each URL in the
-        start_urls attribute of the Spider, and assigns them the parse method
-        of the spider as their callback function.
-        """
-
         hxs = HtmlXPathSelector(response)
 
         item = HeelsItem()

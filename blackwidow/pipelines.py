@@ -9,6 +9,7 @@ import re
 from scrapy.exceptions import DropItem
 
 from django.contrib.auth.models import User
+from django.db.models import Q
 
 from app_heels.models import Heels
 from app_heels import tasks as heels_tasks
@@ -103,8 +104,11 @@ class NormalizationPipeline(object):
 class DjangoModelPipeline(object):
 
     def process_item(self, item, spider):
-        if Blacklist.objects.filter(url=item['source_url']).exists():
-            raise DropItem('URL in blacklist: %s' % item['source_url'])
+        ori_url = item['source_url']
+        http_www_url = ori_url.replace('http://', 'http://www.')
+        https_www_url = ori_url.replace('https://', 'https://www.')
+        if Blacklist.objects.filter(Q(url=ori_url) | Q(url=http_www_url) | Q(url=https_www_url)).exists():
+            raise DropItem('URL in blacklist: %s' % ori_url)
 
         user = User.objects.get(username='vinta')
 
