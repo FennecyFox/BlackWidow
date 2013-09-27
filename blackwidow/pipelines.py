@@ -73,6 +73,9 @@ class NormalizationPipeline(object):
             item['comment'] = comment.replace('... Oh My Vogue !: ', '')
 
         elif spider.name == 'pinterest':
+            if comment.startswith(('. | ', '| ')):
+                item['comment'] = comment.replace('. | ', '').replace('| ', '')
+
             new_image_urls = []
             for image_url in item['image_urls']:
                 if filter(image_url.endswith, ('.jpg', '.jpeg', '.gif', '.png')):
