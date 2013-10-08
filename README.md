@@ -26,3 +26,7 @@ $ scrapy crawl beautylegmm
 $ scrapy crawl fancy
 $ scrapy crawl pinterest
 ```
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/vinta/blackwidow/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
