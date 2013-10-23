@@ -49,7 +49,7 @@ class NormalizationPipeline(object):
             comment = item['comment'][0]
         except IndexError:
             comment = ''
-        item['comment'] = comment
+        item['comment'] = comment.strip()
 
         if spider.name == 'beautylegmm':
             new_image_urls = []
@@ -110,9 +110,6 @@ class DjangoModelPipeline(object):
 
         heels, created = Heels.objects.get_or_create(user=user, source_url=item['source_url'])
         if created:
-            if item['comment']:
-                heels.comment = item['comment'].strip()
-
             heels.source_image_urls = item['image_urls']
 
             if len(item['image_urls']) == 1:
