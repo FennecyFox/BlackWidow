@@ -18,8 +18,8 @@ NEWSPIDER_MODULE = 'blackwidow.spiders'
 
 DEFAULT_ITEM_CLASS = 'blackwidow.items.HeelsItem'
 
-LOG_FILE = 'blackwidow.log'
-LOG_STDOUT = True
+# set False to print to stdout
+LOG_STDOUT = False
 
 ITEM_PIPELINES = [
     'blackwidow.pipelines.DefaultValuePipeline',
@@ -54,7 +54,7 @@ def setup_django_env(django_settings_dir):
     setup_environ(project)
 
 # where Django settings.py placed
-DJANGO_SETTINGS_DIR = '/all_projects/heelsfetishism/heelsfetishism'
+DJANGO_SETTINGS_DIR = '/all_projects/Heelsfetishism/heelsfetishism/heelsfetishism'
 
 try:
     from settings_prod import *

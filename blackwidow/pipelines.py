@@ -46,13 +46,23 @@ class NormalizationPipeline(object):
         if len(item['image_urls']) == 0:
             raise DropItem('No image found: %s' % item['source_url'])
 
-        try:
-            comment = item['comment'][0]
-        except IndexError:
-            comment = ''
-        item['comment'] = comment
+        comment = item['comment']
+        if isinstance(comment, list):
+            try:
+                comment = comment[0]
+            except IndexError:
+                comment = ''
+        item['comment'] = comment.strip()
 
-        if spider.name == 'beautylegmm':
+        if spider.name == 'atlanticpacific':
+            new_image_urls = []
+            for image_url in item['image_urls']:
+                bigger_image_url = image_url.replace('/s898/', '/s1600/')
+                new_image_urls.append(bigger_image_url)
+
+            item['image_urls'] = new_image_urls
+
+        elif spider.name == 'beautylegmm':
             new_image_urls = []
             for image_url in item['image_urls']:
                 new_image_url = urljoin('http://www.beautylegmm.com/', image_url)
@@ -74,8 +84,8 @@ class NormalizationPipeline(object):
             item['comment'] = comment.replace('... Oh My Vogue !: ', '')
 
         elif spider.name == 'pinterest':
-            if comment.startswith('. | '):
-                comment = comment.replace('. | ')
+            if comment.startswith(('. | ', '| ')):
+                item['comment'] = comment.replace('. | ', '').replace('| ', '')
 
             new_image_urls = []
             for image_url in item['image_urls']:
@@ -114,10 +124,9 @@ class DjangoModelPipeline(object):
 
         heels, created = Heels.objects.get_or_create(user=user, source_url=item['source_url'])
         if created:
-            if item['comment']:
-                heels.comment = item['comment'].strip()
-
             heels.source_image_urls = item['image_urls']
+
+            heels.comment = item['comment']
 
             if len(item['image_urls']) == 1:
                 heels.source_image_url = item['image_urls'][0]
