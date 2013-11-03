@@ -17,8 +17,8 @@ class SayHelloMaxSpider(CrawlSpider):
         # find next page
         Rule(
             SgmlLinkExtractor(
-                allow=(r'search\?updated-max=', ),  # http://www.sayhellomax.com/2013/10/femme-fatal.html
-                restrict_xpaths=('//a[@id="blog-pager-older-link"]', ),
+                allow=(r'search\?updated-max=', ),  # http://www.sayhellomax.com/search?updated-max=2013-10-21T08:00:00-07:00&max-results=10
+                restrict_xpaths=('//a[@id="Blog1_blog-pager-older-link"]', ),
                 unique=True,
             ),
             follow=True,
