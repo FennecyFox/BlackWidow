@@ -18,6 +18,7 @@ $ scrapy crawl atlanticpacific
 $ scrapy crawl beautylegmm
 $ scrapy crawl fancy
 $ scrapy crawl garypeppergirl
+$ scrapy crawl itscamilleco
 $ scrapy crawl ohmyvogue
 $ scrapy crawl pinterest
 $ scrapy crawl sayhellomax
