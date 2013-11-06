@@ -55,11 +55,13 @@ class NormalizationPipeline(object):
         item['comment'] = comment.strip()
 
         if spider.name == 'atlanticpacific':
+            search_re = re.compile(r'/s\d+/', re.IGNORECASE)
+
             new_image_urls = []
             for image_url in item['image_urls']:
-                bigger_image_url = image_url.replace('/s898/', '/s1600/')
-                new_image_urls.append(bigger_image_url)
-
+                if search_re.search(image_url):
+                    bigger_image_url = search_re.sub('/s1600/', image_url)
+                    new_image_urls.append(bigger_image_url)
             item['image_urls'] = new_image_urls
 
         elif spider.name == 'beautylegmm':
