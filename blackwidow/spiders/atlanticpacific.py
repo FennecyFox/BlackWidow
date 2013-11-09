@@ -9,9 +9,7 @@ class AtlanticPacificSpider(CrawlSpider):
 
     name = 'atlanticpacific'
     allowed_domains = ['atlantic-pacific.blogspot.tw', ]
-    start_urls = [
-        'http://atlantic-pacific.blogspot.tw/',
-    ]
+    start_urls = ['http://atlantic-pacific.blogspot.tw/', ]
 
     rules = (
         # find next page

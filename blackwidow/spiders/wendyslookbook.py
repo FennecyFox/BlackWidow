@@ -9,9 +9,7 @@ class WendysLookbookSpider(CrawlSpider):
 
     name = 'wendyslookbook'
     allowed_domains = ['www.wendyslookbook.com', ]
-    start_urls = [
-        'http://www.wendyslookbook.com/',
-    ]
+    start_urls = ['http://www.wendyslookbook.com/', ]
 
     rules = (
         # find next page

@@ -9,9 +9,7 @@ class GaryPepperSpider(CrawlSpider):
 
     name = 'garypeppergirl'
     allowed_domains = ['garypeppergirl.com', ]
-    start_urls = [
-        'http://garypeppergirl.com/',
-    ]
+    start_urls = ['http://garypeppergirl.com/', ]
 
     rules = (
         # find next page

@@ -5,22 +5,18 @@ from scrapy.selector import HtmlXPathSelector
 from blackwidow.items import HeelsItem
 
 
-class TVCClubSpider(CrawlSpider):
+class CarolinaKrewsSpider(CrawlSpider):
 
-    name = 'tvcclub'
-    allowed_domains = ['tvcclub.com', ]
-    start_urls = [
-        'http://tvcclub.com/index.php?mid=Korean_Grils',
-        # 'http://tvcclub.com/index.php?mid=Japan_Grils',
-        'http://tvcclub.com/index.php?mid=Asia_Grils',
-    ]
+    name = 'carolinakrews'
+    allowed_domains = ['carolinakrews.blogspot.tw', ]
+    start_urls = ['http://carolinakrews.blogspot.tw/', ]
 
     rules = (
         # find next page
         Rule(
             SgmlLinkExtractor(
-                allow=(r'index.php\?mid=\w+_Grils&page=\d+', ),  # http://tvcclub.com/index.php?mid=Korean_Grils&page=2
-                restrict_xpaths=('//*[@id="bd"]/form', ),
+                allow=(r'search\?updated-max=', ),  # http://carolinakrews.blogspot.tw/search?updated-max=2013-10-17T10:37:00-07:00&max-results=8
+                restrict_xpaths=('//*[@id="Blog1_blog-pager-older-link"]', ),
                 unique=True,
             ),
             follow=True,
@@ -29,8 +25,8 @@ class TVCClubSpider(CrawlSpider):
         # find detail page then parse it
         Rule(
             SgmlLinkExtractor(
-                allow=(r'index.php\?mid=\w+_Grils&document_srl=\d+', ),  # http://tvcclub.com/index.php?mid=Korean_Grils&document_srl=44884
-                restrict_xpaths=('//*[@id="tmb_lst"]', ),
+                allow=(r'\d+/\d+/[\w-]+.html', ),  # http://www.ohmyvogue.com/2013/08/nude-white.html
+                restrict_xpaths=('//*[@id="Blog1"]/div[contains(@class, "blog-posts")]', ),
                 unique=True,
             ),
             callback='parse_post_detail',
@@ -42,7 +38,7 @@ class TVCClubSpider(CrawlSpider):
 
         item = HeelsItem()
         item['comment'] = hxs.select('//title/text()').extract()
-        item['image_urls'] = hxs.select('//*[@id="bd"]//div[contains(@class, "rd_body")]//img/@src').extract()
+        item['image_urls'] = hxs.select('//*[@id="Blog1"]//div[contains(@class, "post-body")]//img/@src').extract()
         item['source_url'] = response.url
 
         return item

@@ -9,9 +9,7 @@ class SayHelloMaxSpider(CrawlSpider):
 
     name = 'sayhellomax'
     allowed_domains = ['sayhellomax.com', ]
-    start_urls = [
-        'http://www.sayhellomax.com/',
-    ]
+    start_urls = ['http://www.sayhellomax.com/', ]
 
     rules = (
         # find next page

@@ -1,9 +1,6 @@
 from scrapy.contrib.linkextractors.sgml import SgmlLinkExtractor
 from scrapy.contrib.spiders import CrawlSpider, Rule
-from scrapy.exceptions import CloseSpider
-from scrapy.http import Request, FormRequest
 from scrapy.selector import HtmlXPathSelector
-from scrapy.spider import BaseSpider
 
 from blackwidow.items import HeelsItem
 
@@ -11,10 +8,8 @@ from blackwidow.items import HeelsItem
 class PinterestSpider(CrawlSpider):
 
     name = 'pinterest'
-    allowed_domains = ['pinterest.com', ]
-    start_urls = [
-        'http://pinterest.com/vintalines/likes/',
-    ]
+    allowed_domains = ['www.pinterest.com', ]
+    start_urls = ['http://www.pinterest.com/vintalines/likes/', ]
 
     rules = (
         # find detail page then parse it

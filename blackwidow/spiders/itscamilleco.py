@@ -9,9 +9,7 @@ class CamilleTriesToBlogSpider(CrawlSpider):
 
     name = 'itscamilleco'
     allowed_domains = ['itscamilleco.com', ]
-    start_urls = [
-        'http://itscamilleco.com/',
-    ]
+    start_urls = ['http://itscamilleco.com/', ]
 
     rules = (
         # find next page

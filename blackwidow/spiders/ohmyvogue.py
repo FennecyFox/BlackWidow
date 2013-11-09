@@ -5,13 +5,11 @@ from scrapy.selector import HtmlXPathSelector
 from blackwidow.items import HeelsItem
 
 
-class WendysLookbookSpider(CrawlSpider):
+class OhMyVogueSpider(CrawlSpider):
 
     name = 'ohmyvogue'
     allowed_domains = ['www.ohmyvogue.com', ]
-    start_urls = [
-        'http://www.ohmyvogue.com/',
-    ]
+    start_urls = ['http://www.ohmyvogue.com/', ]
 
     rules = (
         # find next page

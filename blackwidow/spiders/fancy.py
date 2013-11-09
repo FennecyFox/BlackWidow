@@ -9,9 +9,7 @@ class FancySpider(CrawlSpider):
 
     name = 'fancy'
     allowed_domains = ['fancy.com', ]
-    start_urls = [
-        'http://fancy.com/vinta',
-    ]
+    start_urls = ['http://fancy.com/vinta', ]
 
     rules = (
         # find next page

@@ -5,18 +5,18 @@ from scrapy.selector import HtmlXPathSelector
 from blackwidow.items import HeelsItem
 
 
-class BeautylegMMSpider(CrawlSpider):
+class SaucyGlossieSpider(CrawlSpider):
 
-    name = 'beautylegmm'
-    allowed_domains = ['www.beautylegmm.com', ]
-    start_urls = ['http://www.beautylegmm.com/', ]
+    name = 'saucyglossie'
+    allowed_domains = ['www.saucyglossie.com', ]
+    start_urls = ['http://www.saucyglossie.com/', ]
 
     rules = (
         # find next page
         Rule(
             SgmlLinkExtractor(
-                allow=(r'index\-\d+\.html', ),  # http://www.beautylegmm.com/index-2.html
-                restrict_xpaths=('//*[@id="pages"]', ),
+                allow=(r'page/\d+/', ),  # http://www.saucyglossie.com/page/2/
+                restrict_xpaths=('//*[@id="container_wrapper"]//div[contains(@class, "wp-pagenavi")]', ),
                 unique=True,
             ),
             follow=True,
@@ -25,8 +25,8 @@ class BeautylegMMSpider(CrawlSpider):
         # find detail page then parse it
         Rule(
             SgmlLinkExtractor(
-                allow=(r'\w+/beautyleg\-\d+\.html', ),  # http://www.beautylegmm.com/Susan/beautyleg-816.html
-                restrict_xpaths=('//*[@id="content"]', ),
+                allow=(r'/[\w-]+/', ),  # http://www.saucyglossie.com/natures-neutrals/
+                restrict_xpaths=('//*[@id="container_wrapper"]//div[contains(@class, "count_l")]', ),
                 unique=True,
             ),
             callback='parse_post_detail',
@@ -44,8 +44,8 @@ class BeautylegMMSpider(CrawlSpider):
 
         item = HeelsItem()
 
-        item['comment'] = hxs.select('//*[@id="contents"]/div[5]/p[1]/text()').extract()
-        item['image_urls'] = hxs.select('//*[@id="contents"]/div[5]//img/@src').extract()
+        item['comment'] = hxs.select('//title/text()').extract()
+        item['image_urls'] = hxs.select('//*[@id="container_wrapper"]//div[contains(@class, "contentwrap")]//img/@src').extract()
         item['source_url'] = response.url
 
         return item
