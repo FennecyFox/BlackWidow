@@ -5,17 +5,17 @@ from scrapy.selector import HtmlXPathSelector
 from blackwidow.items import HeelsItem
 
 
-class HapaTimeSpider(CrawlSpider):
+class IvoryLaneSpider(CrawlSpider):
 
-    name = 'hapatime'
-    allowed_domains = ['hapatime.com', ]
-    start_urls = ['http://www.hapatime.com/', ]
+    name = 'theivorylane'
+    allowed_domains = ['theivorylane.com', ]
+    start_urls = ['http://www.theivorylane.com/', ]
 
     rules = (
         # find next page
         Rule(
             SgmlLinkExtractor(
-                allow=(r'search\?updated-max=', ),  # http://www.hapatime.com/search?updated-max=2013-11-26T06:07:00-08:00&max-results=3
+                allow=(r'search\?updated-max=', ),  # http://www.theivorylane.com/search?updated-max=2013-11-22T05:01:00-08:00&max-results=4
                 restrict_xpaths=('//*[@id="blog-pager-older-link"]', ),
                 unique=True,
             ),
@@ -25,7 +25,7 @@ class HapaTimeSpider(CrawlSpider):
         # find detail page then parse it
         Rule(
             SgmlLinkExtractor(
-                allow=(r'\d+/\d+/[\w-]+.html', ),  # http://www.hapatime.com/2013/11/prim-and-proper.html
+                allow=(r'\d+/\d+/[\w-]+.html', ),  # http://www.theivorylane.com/2013/11/loft-holiday.html
                 restrict_xpaths=('//*[@id="Blog1"]/div[contains(@class, "blog-posts")]', ),
                 unique=True,
             ),
