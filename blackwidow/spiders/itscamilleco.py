@@ -15,7 +15,7 @@ class CamilleTriesToBlogSpider(CrawlSpider):
         # find next page
         Rule(
             SgmlLinkExtractor(
-                allow=(r'page/2/', ),  # http://itscamilleco.com/page/2/
+                allow=(r'page/\d+/', ),  # http://itscamilleco.com/page/2/
                 restrict_xpaths=('//*[@id="post-nav"]/div[1]/div', ),
                 unique=True,
             ),
