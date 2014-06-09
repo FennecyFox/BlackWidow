@@ -15,8 +15,8 @@ class CamilleTriesToBlogSpider(CrawlSpider):
         # find next page
         Rule(
             SgmlLinkExtractor(
-                allow=(r'page/\d+/', ),  # http://itscamilleco.com/page/2/
-                restrict_xpaths=('//div[contains(@class, "pagination")]', ),
+                allow=(r'page/2/', ),  # http://itscamilleco.com/page/2/
+                restrict_xpaths=('//*[@id="post-nav"]/div[1]/div', ),
                 unique=True,
             ),
             follow=True,
@@ -26,7 +26,7 @@ class CamilleTriesToBlogSpider(CrawlSpider):
         Rule(
             SgmlLinkExtractor(
                 allow=(r'\d+/\d+/[\w-]+/', ),  # http://itscamilleco.com/2013/11/beach-baby/
-                restrict_xpaths=('//*[@id="main"]', ),
+                restrict_xpaths=('//*[@id="content"]', ),
                 unique=True,
             ),
             callback='parse_post_detail',
@@ -43,9 +43,8 @@ class CamilleTriesToBlogSpider(CrawlSpider):
         hxs = HtmlXPathSelector(response)
 
         item = HeelsItem()
-
         item['comment'] = hxs.select('//title/text()').extract()
-        item['image_urls'] = hxs.select('//*[@id="main"]//div[contains(@class, "post")]//div[contains(@class, "entry")]//img/@src').extract()
+        item['image_urls'] = hxs.select('//*[@id="content"]//div[contains(@class, "entry-content")]//img/@src').extract()
         item['source_url'] = response.url
 
         return item

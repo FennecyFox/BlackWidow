@@ -26,7 +26,7 @@ class OhMyVogueSpider(CrawlSpider):
         Rule(
             SgmlLinkExtractor(
                 allow=(r'\d+/\d+/[\w-]+.html', ),  # http://www.ohmyvogue.com/2013/08/nude-white.html
-                restrict_xpaths=('//*[@id="Blog1"]/div[contains(@class, "blog-posts")]', ),
+                restrict_xpaths=('//*[@id="Blog1"]/div[1]', ),
                 unique=True,
             ),
             callback='parse_post_detail',
@@ -38,7 +38,7 @@ class OhMyVogueSpider(CrawlSpider):
 
         item = HeelsItem()
         item['comment'] = hxs.select('//title/text()').extract()
-        item['image_urls'] = hxs.select('//*[@id="Blog1"]//div[contains(@class, "post-body")]//img/@src').extract()
+        item['image_urls'] = hxs.select('//*[@id="Blog1"]/div[1]/div/div/div/div[1]//img/@src').extract()
         item['source_url'] = response.url
 
         return item
