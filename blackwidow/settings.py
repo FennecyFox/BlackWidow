@@ -25,7 +25,7 @@ ITEM_PIPELINES = [
     'blackwidow.pipelines.DefaultValuePipeline',
     'blackwidow.pipelines.DuplicatePipeline',
     'blackwidow.pipelines.NormalizationPipeline',
-    'blackwidow.pipelines.DjangoModelPipeline',
+    'blackwidow.pipelines.SubmitItemPipeline',
     # 'scrapy.contrib.pipeline.images.ImagesPipeline',
 ]
 
@@ -36,30 +36,7 @@ if 'scrapy.contrib.pipeline.images.ImagesPipeline' in ITEM_PIPELINES:
     IMAGES_STORE = os.path.join(PROJECT_PATH, 'images')
     IMAGES_MIN_WIDTH = 450
 
-
-# http://jonathanstreet.com/blog/django-scrapy/
-def setup_django_env(django_settings_dir):
-    import imp
-    import sys
-
-    from django.core.management import setup_environ
-
-    django_project_path = os.path.abspath(os.path.join(django_settings_dir, '..'))
-    sys.path.append(django_project_path)
-    sys.path.append(django_settings_dir)
-
-    f, filename, desc = imp.find_module('settings', [django_settings_dir, ])
-    project = imp.load_module('settings', f, filename, desc)
-
-    setup_environ(project)
-
-# where Django settings.py placed
-DJANGO_SETTINGS_DIR = '/all_projects/Heelsfetishism/heelsfetishism/heelsfetishism'
-
 try:
     from settings_prod import *
 except ImportError:
     pass
-
-if 'blackwidow.pipelines.DjangoModelPipeline' in ITEM_PIPELINES:
-    setup_django_env(DJANGO_SETTINGS_DIR)

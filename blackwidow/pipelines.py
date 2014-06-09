@@ -4,16 +4,13 @@
 # See: http://doc.scrapy.org/topics/item-pipeline.html
 
 from urlparse import urljoin
+import json
+import os
 import re
 
 from scrapy.exceptions import DropItem
 
-from django.contrib.auth.models import User
-from django.db.models import Q
-
-from app_heels.models import Heels
-from app_heels import tasks as heels_tasks
-from app_reaper.models import Blacklist
+import requests
 
 
 class DefaultValuePipeline(object):
@@ -79,9 +76,6 @@ class NormalizationPipeline(object):
                     new_image_urls.append(bigger_image_url)
             item['image_urls'] = new_image_urls
 
-        elif spider.name == 'fancy':
-            item['comment'] = comment.replace('Fancy - ', '')
-
         elif spider.name == 'garypeppergirl':
             new_image_urls = []
             for image_url in item['image_urls']:
@@ -98,9 +92,6 @@ class NormalizationPipeline(object):
 
             item['image_urls'] = new_image_urls
 
-        elif spider.name == 'ohmyvogue':
-            item['comment'] = comment.replace('... Oh My Vogue !: ', '')
-
         elif spider.name == 'pinterest':
             item['source_url'] = item['source_url'].replace('https://', 'http://')
 
@@ -116,9 +107,6 @@ class NormalizationPipeline(object):
             item['image_urls'] = new_image_urls
 
         elif spider.name == 'wendyslookbook':
-            comment = comment.replace(" : Wendy's Lookbook", '').replace('  :: ', ' :: ')
-            item['comment'] = comment
-
             new_image_urls = []
             for image_url in item['image_urls']:
                 new_image_url = re.sub(r'\-\d+x\d+\.', '.', image_url)
@@ -131,33 +119,21 @@ class NormalizationPipeline(object):
         return item
 
 
-class DjangoModelPipeline(object):
+class SubmitItemPipeline(object):
 
     def process_item(self, item, spider):
-        source_url = item['source_url']
-        http_www_url = source_url.replace('http://', 'http://www.')
-        https_www_url = source_url.replace('https://', 'https://www.')
-        if Blacklist.objects.filter(Q(url=source_url) | Q(url=http_www_url) | Q(url=https_www_url)).exists():
-            raise DropItem('URL in blacklist: %s' % source_url)
 
-        user = User.objects.get(username='vinta')
+        TOKEN = os.environ['HF_TOKEN']
+        API_URL = os.environ['HF_SUBMIT_API_URL']
 
-        heels, created = Heels.objects.get_or_create(user=user, source_url=source_url)
-        if created:
-            heels.source_image_urls = item['image_urls']
-
-            heels.comment = item['comment']
-
-            if len(item['image_urls']) == 1:
-                heels.source_image_url = item['image_urls'][0]
-
-            heels.save()
-        else:
-            return item
-
-        if created:
-            if heels.source_image_url:
-                # Celery task
-                heels_tasks.save_heels_image.delay(heels.id, url=heels.source_image_url)
+        headers = {
+            'Authorization': 'Token %s' % (TOKEN),
+        }
+        payload = {
+            'name': spider.name,
+            'url': spider.start_urls[0],
+            'item': dict(item),
+        }
+        r = requests.post(API_URL, data=json.dumps(payload), headers=headers)
 
         return item
