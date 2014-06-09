@@ -19,6 +19,7 @@ $ scrapy crawl beautylegmm
 $ scrapy crawl fancy
 $ scrapy crawl garypeppergirl
 $ scrapy crawl itscamilleco
+$ scrapy crawl madamejulietta
 $ scrapy crawl ohmyvogue
 $ scrapy crawl pinterest
 $ scrapy crawl sayhellomax
