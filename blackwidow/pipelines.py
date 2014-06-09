@@ -9,6 +9,7 @@ import os
 import re
 
 from scrapy.exceptions import DropItem
+from scrapy import log
 
 import requests
 
@@ -122,7 +123,6 @@ class NormalizationPipeline(object):
 class SubmitItemPipeline(object):
 
     def process_item(self, item, spider):
-
         TOKEN = os.environ['HF_TOKEN']
         API_URL = os.environ['HF_SUBMIT_API_URL']
 
@@ -135,5 +135,7 @@ class SubmitItemPipeline(object):
             'item': dict(item),
         }
         r = requests.post(API_URL, data=json.dumps(payload), headers=headers)
+        if not r.ok:
+            log.msg(r.content, level=log.ERROR)
 
         return item
