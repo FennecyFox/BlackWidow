@@ -1,6 +1,6 @@
 from scrapy.contrib.linkextractors.sgml import SgmlLinkExtractor
 from scrapy.contrib.spiders import CrawlSpider, Rule
-from scrapy.selector import HtmlXPathSelector
+from scrapy.selector import Selector
 
 from blackwidow.items import HeelsItem
 
@@ -40,12 +40,11 @@ class BeautylegMMSpider(CrawlSpider):
         of the spider as their callback function.
         """
 
-        hxs = HtmlXPathSelector(response)
+        sel = Selector(response, type='html')
 
         item = HeelsItem()
-
-        item['comment'] = hxs.select('//*[@id="contents"]/div[5]/p[1]/text()').extract()
-        item['image_urls'] = hxs.select('//*[@id="contents"]/div[5]//img/@src').extract()
+        item['comment'] = sel.xpath('//*[@id="contents_post"]/div[5]/p[1]/text()').extract()
+        item['image_urls'] = sel.xpath('//*[@id="contents_post"]/div[5]//img/@src').extract()
         item['source_url'] = response.url
 
         return item
