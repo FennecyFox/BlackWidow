@@ -1,5 +1,5 @@
-scrapy==0.22.2
+scrapy==0.24.4
 
 scrapy-sentry==0.6.1
 
-service_identity==1.0.0
+service-identity==14.0.0
