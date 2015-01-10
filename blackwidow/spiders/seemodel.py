@@ -11,7 +11,10 @@ class SeeModelSpider(CrawlSpider):
     name = 'seemodel'
     allowed_domains = ['www.seemodel.com', ]
     login_page = 'http://www.seemodel.com/member.php?mod=logging&action=login'
-    start_urls = ['http://www.seemodel.com/forum.php?mod=forumdisplay&fid=42&filter=heat&orderby=heats', ]
+    start_urls = [
+        'http://www.seemodel.com/forum.php?mod=forumdisplay&fid=41&filter=heat&orderby=heats',
+        'http://www.seemodel.com/forum.php?mod=forumdisplay&fid=42&filter=heat&orderby=heats',
+    ]
 
     rules = (
         Rule(
