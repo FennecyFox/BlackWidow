@@ -107,6 +107,14 @@ class NormalizationPipeline(object):
 
             item['image_urls'] = new_image_urls
 
+        elif spider.name == 'seemodel':
+            new_image_urls = []
+            for image_url in item['image_urls']:
+                new_image_url = 'http://www.seemodel.com/' + image_url
+                new_image_urls.append(new_image_url)
+
+            item['image_urls'] = new_image_urls
+
         elif spider.name == 'wendyslookbook':
             new_image_urls = []
             for image_url in item['image_urls']:
